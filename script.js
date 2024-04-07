@@ -1,5 +1,5 @@
 window.onload = function () {
-  const delay = 120;
+  const delay = 110;
   const canvasWidth = 900;
   const canvasHeight = 600;
   const blockSize = 30;
@@ -8,6 +8,7 @@ window.onload = function () {
   let mowgli;
   const widthInBlocks = canvasWidth / blockSize;
   const heightInBlocks = canvasHeight / blockSize;
+  let score;
 
   init();
 
@@ -19,15 +20,9 @@ window.onload = function () {
     canvas.style.border = "1px solid";
     document.body.appendChild(canvas);
     ctx = canvas.getContext("2d");
-    kaa = new Kaa(
-      [
-        [6, 4],
-        [5, 4],
-        [4, 4],
-      ],
-      "right"
-    );
+    kaa = new Kaa([[6, 4]], "right");
     mowgli = new Mowgli([10, 10]);
+    score = 0;
     refreshCanvas();
   }
 
@@ -35,16 +30,44 @@ window.onload = function () {
   function refreshCanvas() {
     kaa.advance();
     if (kaa.checkCollision()) {
-      // GAME OVER
+      gameOver();
     } else {
       if (kaa.isEatingMowgli(mowgli)) {
-        mowgli.setNewPosition();
+        score++;
+        kaa.ateMowgli = true;
+        do {
+          mowgli.setNewPosition();
+        } while (mowgli.isOnKaa(kaa));
       }
       ctx.clearRect(0, 0, canvasWidth, canvasHeight);
       kaa.draw();
       mowgli.draw();
+      displayScore();
       setTimeout(refreshCanvas, delay);
     }
+  }
+
+  // Set when the game is over
+  function gameOver() {
+    ctx.save();
+    ctx.fillText("Game Over", 5, 15);
+    ctx.fillText("Push space to retry", 5, 30);
+    ctx.restore();
+  }
+
+  // Allow to restart the game
+  function restartGame() {
+    kaa = new Kaa([[6, 4]], "right");
+    mowgli = new Mowgli([10, 10]);
+    score = 0;
+    refreshCanvas();
+  }
+
+  // Display the score on the board
+  function displayScore() {
+    ctx.save();
+    ctx.fillText(score.toString(), 5, canvasHeight - 5);
+    ctx.restore();
   }
 
   // Able to draw Kaa on the screen
@@ -57,6 +80,7 @@ window.onload = function () {
   function Kaa(body, direction) {
     this.body = body;
     this.direction = direction;
+    this.ateMowgli = false;
     this.draw = function () {
       ctx.save();
       ctx.fillStyle = "#33cc33";
@@ -86,7 +110,8 @@ window.onload = function () {
           throw "Invalid direction";
       }
       this.body.unshift(nextPosition);
-      this.body.pop();
+      if (!this.ateMowgli) this.body.pop();
+      else this.ateMowgli = false;
     };
 
     // Allow directions to create new directions
@@ -163,6 +188,8 @@ window.onload = function () {
       let newY = Math.round(Math.random() * (heightInBlocks - 1));
       this.position = [newX, newY];
     };
+
+    // To prevent Mowgli from being on Kaa
     this.isOnKaa = function (kaaToCheck) {
       let isOnKaa = false;
       for (let i = 0; i < kaaToCheck.body.length; i++) {
@@ -193,6 +220,9 @@ window.onload = function () {
         case 40:
           newDirection = "down";
           break;
+        case 32:
+          restartGame();
+          return;
         default:
           return;
       }
