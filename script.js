@@ -12,6 +12,7 @@ window.onload = function () {
 
   // Toggle button for the background song
   const bgMusic = document.getElementById("bg-music");
+  bgMusic.volume = 0.2;
   const toggleButton = document.getElementById("toggle-music");
 
   toggleButton.addEventListener("click", function () {
