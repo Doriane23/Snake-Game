@@ -8,6 +8,7 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 75px;
 }
 
 body {
@@ -19,8 +20,21 @@ body {
 
 canvas {
   position: absolute;
-  top: 50%;
+  border: 20px solid gray;
+  border-radius: 10px;
+  box-shadow: -15px -15px 50px rgb(235, 235, 235),
+    15px 15px 50px rgb(235, 235, 235);
+  top: 60%;
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: rgba(255, 255, 255, 0.692);
+}
+
+#toggle-music {
+  border: none;
+  border-radius: 50px;
+  width: 30px;
+  height: 30px;
+  margin-left: 500px;
+  background-color: rgb(12, 12, 12);
 }
