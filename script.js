@@ -1,5 +1,5 @@
 window.onload = function () {
-  const delay = 100;
+  const delay = 150;
   const canvasWidth = 900;
   const canvasHeight = 600;
   const blockSize = 30;
@@ -105,30 +105,28 @@ window.onload = function () {
         this.direction = newDirection;
       }
     };
-    
+
     //Check if there are some collisions with the snake
     this.checkCollision = function () {
-      const wallCollision = false;
-      const snakeBite = false;
-      let snakeHead = this.body[0];
-      let snakeRest = this.body.slice(1);
-      let snakeX = snakeHead[0];
-      let snakeY = snakeHead[1];
+      let wallCollision = false;
+      let snakeBite = false;
+      const snakeHead = this.body[0];
+      const snakeX = snakeHead[0];
+      const snakeY = snakeHead[1];
       const minX = 0;
       const minY = 0;
       const maxX = widthInBlocks - 1;
       const maxY = heightInBlocks - 1;
-      let isNotBetweenHorizontalWalls = snakeX < minX || snakeX > maxX;
-      let isNotBetweenVerticalWalls = snakeY < minY || snakeY > maxY;
-      if (isNotBetweenHorizontalWalls || isNotBetweenVerticalWalls) {
+      if (snakeX < minX || snakeX > maxX || snakeY < minY || snakeY > maxY) {
         wallCollision = true;
       }
-      for (let i = 0; i < snakeRest.length; i++) {
-        if (snakeX === snakeRest[i][0] && snakeY === snakeRest[i][0]) {
+      for (let i = 1; i < this.body.length; i++) {
+        if (snakeX === this.body[i][0] && snakeY === this.body[i][1]) {
           snakeBite = true;
         }
-        return wallCollision || snakeBite;
       }
+
+      return wallCollision || snakeBite;
     };
   }
 
